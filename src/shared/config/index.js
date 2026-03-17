@@ -36,7 +36,7 @@ const config = {
   },
   admin: {
     email: process.env.SUPER_ADMIN_EMAIL || 'admin@vertoone.com',
-    password: process.env.SUPER_ADMIN_PASSWORD || 'tamkin@123#1'
+    password: process.env.SUPER_ADMIN_PASSWORD
   }
 };
 
