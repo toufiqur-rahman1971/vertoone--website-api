@@ -1,29 +1,27 @@
 const Job = require('./job.model');
 
-class JobRepository {
-  async create(data) {
-    return Job.create(data);
-  }
+const createJobRepository = (model = Job) => {
+  const create = (data) => model.create(data);
 
-  async findAll({ skip, limit }) {
-    return Job.find().sort({ createdAt: -1 }).skip(skip).limit(limit);
-  }
+  const findAll = ({ skip, limit }) =>
+    model.find().sort({ createdAt: -1 }).skip(skip).limit(limit);
 
-  async count() {
-    return Job.countDocuments();
-  }
+  const count = () => model.countDocuments();
 
-  async findById(id) {
-    return Job.findById(id);
-  }
+  const findById = (id) => model.findById(id);
 
-  async update(id, data) {
-    return Job.findByIdAndUpdate(id, data, { new: true, runValidators: true });
-  }
+  const update = (id, data) => model.findByIdAndUpdate(id, data, { new: true, runValidators: true });
 
-  async delete(id) {
-    return Job.findByIdAndDelete(id);
-  }
-}
+  const deleteById = (id) => model.findByIdAndDelete(id);
 
-module.exports = JobRepository;
+  return {
+    create,
+    findAll,
+    count,
+    findById,
+    update,
+    delete: deleteById
+  };
+};
+
+module.exports = createJobRepository;

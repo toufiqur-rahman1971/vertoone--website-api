@@ -1,13 +1,14 @@
 const Newsletter = require('./newsletter.model');
 
-class NewsletterRepository {
-  async create(data) {
-    return Newsletter.create(data);
-  }
+const createNewsletterRepository = (model = Newsletter) => {
+  const create = (data) => model.create(data);
 
-  async findByEmail(email) {
-    return Newsletter.findOne({ email: email.toLowerCase() });
-  }
-}
+  const findByEmail = (email) => model.findOne({ email: email.toLowerCase() });
 
-module.exports = NewsletterRepository;
+  return {
+    create,
+    findByEmail
+  };
+};
+
+module.exports = createNewsletterRepository;

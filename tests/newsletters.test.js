@@ -12,7 +12,7 @@ const mockCreateSubscription = jest.fn();
 const mockSendEmail = jest.fn().mockResolvedValue({ messageId: 'test-message' });
 
 jest.mock('../src/modules/newsletters/newsletter.repository', () =>
-  jest.fn().mockImplementation(() => ({
+  jest.fn(() => ({
     findByEmail: mockFindByEmail,
     create: mockCreateSubscription
   }))

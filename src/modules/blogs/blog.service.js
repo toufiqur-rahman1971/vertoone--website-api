@@ -1,18 +1,12 @@
-const AppError = require('../../shared/utils/app-error');
+const createAppError = require('../../shared/utils/app-error');
 
-class BlogService {
-  constructor(repository) {
-    this.repository = repository;
-  }
+const createBlogService = ({ blogRepository }) => {
+  const createBlog = async (payload) => blogRepository.create(payload);
 
-  async createBlog(payload) {
-    return this.repository.create(payload);
-  }
-
-  async listBlogs(pagination) {
+  const listBlogs = async (pagination) => {
     const [blogs, total] = await Promise.all([
-      this.repository.findAll(pagination),
-      this.repository.count()
+      blogRepository.findAll(pagination),
+      blogRepository.count()
     ]);
 
     return {
@@ -23,37 +17,45 @@ class BlogService {
         limit: pagination.limit
       }
     };
-  }
+  };
 
-  async getBlog(id) {
-    const blog = await this.repository.findById(id);
+  const getBlog = async (id) => {
+    const blog = await blogRepository.findById(id);
 
     if (!blog) {
-      throw new AppError('Blog not found', 404);
+      throw createAppError('Blog not found', 404);
     }
 
     return blog;
-  }
+  };
 
-  async updateBlog(id, payload) {
-    const blog = await this.repository.update(id, payload);
+  const updateBlog = async (id, payload) => {
+    const blog = await blogRepository.update(id, payload);
 
     if (!blog) {
-      throw new AppError('Blog not found', 404);
+      throw createAppError('Blog not found', 404);
     }
 
     return blog;
-  }
+  };
 
-  async deleteBlog(id) {
-    const blog = await this.repository.delete(id);
+  const deleteBlog = async (id) => {
+    const blog = await blogRepository.delete(id);
 
     if (!blog) {
-      throw new AppError('Blog not found', 404);
+      throw createAppError('Blog not found', 404);
     }
 
     return blog;
-  }
-}
+  };
 
-module.exports = BlogService;
+  return {
+    createBlog,
+    listBlogs,
+    getBlog,
+    updateBlog,
+    deleteBlog
+  };
+};
+
+module.exports = createBlogService;

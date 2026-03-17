@@ -1,26 +1,23 @@
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('../../shared/config');
-const AppError = require('../../shared/utils/app-error');
+const createAppError = require('../../shared/utils/app-error');
 const { toUserResponse } = require('./auth.dto');
 
-class AuthService {
-  constructor(repository) {
-    this.repository = repository;
-  }
-
-  async login(payload) {
+const createAuthService = ({ authRepository }) => {
+  const login = async (payload) => {
     const { email, password } = payload;
 
-    const user = await this.repository.findByEmail(email, true);
+    const user = await authRepository.findByEmail(email, true);
 
     if (!user) {
-      throw new AppError('Invalid email or password', 401);
+      throw createAppError('Invalid email or password', 401);
     }
 
-    const passwordMatches = await user.comparePassword(password);
+    const passwordMatches = await bcrypt.compare(password, user.password);
 
     if (!passwordMatches) {
-      throw new AppError('Invalid email or password', 401);
+      throw createAppError('Invalid email or password', 401);
     }
 
     const token = jwt.sign(
@@ -38,23 +35,23 @@ class AuthService {
       token,
       user: toUserResponse(user)
     };
-  }
+  };
 
-  async createUser(payload) {
-    const existingUser = await this.repository.findByEmail(payload.email);
+  const createUser = async (payload) => {
+    const existingUser = await authRepository.findByEmail(payload.email);
 
     if (existingUser) {
-      throw new AppError('Email already in use', 409);
+      throw createAppError('Email already in use', 409);
     }
 
-    const user = await this.repository.create(payload);
+    const user = await authRepository.create(payload);
     return toUserResponse(user);
-  }
+  };
 
-  async listUsers(pagination) {
+  const listUsers = async (pagination) => {
     const [users, total] = await Promise.all([
-      this.repository.findAll(pagination),
-      this.repository.count()
+      authRepository.findAll(pagination),
+      authRepository.count()
     ]);
 
     return {
@@ -65,17 +62,24 @@ class AuthService {
         limit: pagination.limit
       }
     };
-  }
+  };
 
-  async getProfile(userId) {
-    const user = await this.repository.findById(userId);
+  const getProfile = async (userId) => {
+    const user = await authRepository.findById(userId);
 
     if (!user) {
-      throw new AppError('User not found', 404);
+      throw createAppError('User not found', 404);
     }
 
     return toUserResponse(user);
-  }
-}
+  };
 
-module.exports = AuthService;
+  return {
+    login,
+    createUser,
+    listUsers,
+    getProfile
+  };
+};
+
+module.exports = createAuthService;

@@ -1,10 +1,11 @@
-const BlogRepository = require('./blog.repository');
-const BlogService = require('./blog.service');
+const createBlogRepository = require('./blog.repository');
+const createBlogService = require('./blog.service');
 const asyncHandler = require('../../shared/utils/async-handler');
 const { sendResponse } = require('../../shared/utils/response');
 const { getPagination } = require('../../shared/utils/pagination');
 
-const blogService = new BlogService(new BlogRepository());
+const blogRepository = createBlogRepository();
+const blogService = createBlogService({ blogRepository });
 
 const createBlog = asyncHandler(async (req, res) => {
   const blog = await blogService.createBlog(req.body);

@@ -1,21 +1,16 @@
-const AppError = require('../../shared/utils/app-error');
+const createAppError = require('../../shared/utils/app-error');
 
-class NewsletterService {
-  constructor(repository, emailService) {
-    this.repository = repository;
-    this.emailService = emailService;
-  }
-
-  async subscribe(payload) {
-    const existing = await this.repository.findByEmail(payload.email);
+const createNewsletterService = ({ newsletterRepository, emailService }) => {
+  const subscribe = async (payload) => {
+    const existing = await newsletterRepository.findByEmail(payload.email);
 
     if (existing) {
-      throw new AppError('Email already subscribed', 409);
+      throw createAppError('Email already subscribed', 409);
     }
 
-    const subscription = await this.repository.create(payload);
+    const subscription = await newsletterRepository.create(payload);
 
-    await this.emailService.sendEmail({
+    await emailService.sendEmail({
       to: subscription.email,
       subject: 'Welcome to the Vertoone newsletter',
       template: 'newsletter-welcome.html',
@@ -23,7 +18,11 @@ class NewsletterService {
     });
 
     return subscription;
-  }
-}
+  };
 
-module.exports = NewsletterService;
+  return {
+    subscribe
+  };
+};
+
+module.exports = createNewsletterService;

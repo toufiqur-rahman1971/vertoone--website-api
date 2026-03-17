@@ -10,7 +10,7 @@ process.env.EMAIL_FROM = 'no-reply@test.com';
 const mockFindByEmail = jest.fn();
 
 jest.mock('../src/modules/auths/auth.repository', () =>
-  jest.fn().mockImplementation(() => ({
+  jest.fn(() => ({
     findByEmail: mockFindByEmail,
     findById: jest.fn(),
     findAll: jest.fn(),
@@ -20,6 +20,7 @@ jest.mock('../src/modules/auths/auth.repository', () =>
 );
 
 const request = require('supertest');
+const bcrypt = require('bcryptjs');
 const app = require('../src/app');
 
 describe('Auth login', () => {
@@ -28,11 +29,12 @@ describe('Auth login', () => {
   });
 
   it('should login with valid credentials', async () => {
+    const hashedPassword = await bcrypt.hash('Password123!', 10);
     const user = {
       id: 'user-id',
       email: 'user@example.com',
       role: 'USER',
-      comparePassword: jest.fn().mockResolvedValue(true),
+      password: hashedPassword,
       createdAt: new Date(),
       updatedAt: new Date()
     };
