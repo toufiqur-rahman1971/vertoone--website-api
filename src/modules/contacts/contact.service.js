@@ -1,3 +1,4 @@
+const handlebars = require('handlebars');
 const config = require('../../shared/config');
 
 class ContactService {
@@ -20,10 +21,15 @@ class ContactService {
     });
 
     if (config.email.adminNotificationEmail) {
+      const escape = handlebars.escapeExpression;
+      const safeName = escape(`${contact.firstName} ${contact.lastName}`);
+      const safeSubject = escape(contact.subject);
+      const safeMessage = escape(contact.message);
+
       await this.emailService.sendEmail({
         to: config.email.adminNotificationEmail,
         subject: `New contact request: ${contact.subject}`,
-        html: `<p>${contact.firstName} ${contact.lastName} sent a message.</p><p>${contact.message}</p>`
+        html: `<p>${safeName} sent a message.</p><p><strong>Subject:</strong> ${safeSubject}</p><p>${safeMessage}</p>`
       });
     }
 
