@@ -1,29 +1,27 @@
 const Blog = require('./blog.model');
 
-class BlogRepository {
-  async create(data) {
-    return Blog.create(data);
-  }
+const createBlogRepository = (model = Blog) => {
+  const create = (data) => model.create(data);
 
-  async findAll({ skip, limit }) {
-    return Blog.find().sort({ createdAt: -1 }).skip(skip).limit(limit);
-  }
+  const findAll = ({ skip, limit }) =>
+    model.find().sort({ createdAt: -1 }).skip(skip).limit(limit);
 
-  async count() {
-    return Blog.countDocuments();
-  }
+  const count = () => model.countDocuments();
 
-  async findById(id) {
-    return Blog.findById(id);
-  }
+  const findById = (id) => model.findById(id);
 
-  async update(id, data) {
-    return Blog.findByIdAndUpdate(id, data, { new: true, runValidators: true });
-  }
+  const update = (id, data) => model.findByIdAndUpdate(id, data, { new: true, runValidators: true });
 
-  async delete(id) {
-    return Blog.findByIdAndDelete(id);
-  }
-}
+  const deleteById = (id) => model.findByIdAndDelete(id);
 
-module.exports = BlogRepository;
+  return {
+    create,
+    findAll,
+    count,
+    findById,
+    update,
+    delete: deleteById
+  };
+};
+
+module.exports = createBlogRepository;

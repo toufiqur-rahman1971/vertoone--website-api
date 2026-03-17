@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const config = require('../config');
-const AppError = require('../utils/app-error');
+const createAppError = require('../utils/app-error');
 const logger = require('../utils/logger');
 
 const authenticate = (req, _res, next) => {
@@ -8,7 +8,7 @@ const authenticate = (req, _res, next) => {
   const token = authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
 
   if (!token) {
-    return next(new AppError('Authentication token is missing', 401));
+    return next(createAppError('Authentication token is missing', 401));
   }
 
   try {
@@ -17,7 +17,7 @@ const authenticate = (req, _res, next) => {
     return next();
   } catch (error) {
     logger.warn('JWT verification failed', error);
-    return next(new AppError('Invalid or expired token', 401));
+    return next(createAppError('Invalid or expired token', 401));
   }
 };
 

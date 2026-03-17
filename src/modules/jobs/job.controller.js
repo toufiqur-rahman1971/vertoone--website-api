@@ -1,10 +1,11 @@
-const JobRepository = require('./job.repository');
-const JobService = require('./job.service');
+const createJobRepository = require('./job.repository');
+const createJobService = require('./job.service');
 const asyncHandler = require('../../shared/utils/async-handler');
 const { sendResponse } = require('../../shared/utils/response');
 const { getPagination } = require('../../shared/utils/pagination');
 
-const jobService = new JobService(new JobRepository());
+const jobRepository = createJobRepository();
+const jobService = createJobService({ jobRepository });
 
 const createJob = asyncHandler(async (req, res) => {
   const job = await jobService.createJob(req.body);

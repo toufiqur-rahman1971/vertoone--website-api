@@ -1,33 +1,49 @@
+const bcrypt = require('bcryptjs');
 const User = require('./auth.model');
 
-class AuthRepository {
-  async create(data) {
-    return User.create(data);
-  }
+const hashPassword = async (password) => {
+  const salt = await bcrypt.genSalt(10);
+  return bcrypt.hash(password, salt);
+};
 
-  async findByEmail(email, includePassword = false) {
-    const query = User.findOne({ email: email.toLowerCase() });
+const createAuthRepository = (model = User) => {
+  const create = async (data) => {
+    const payload = { ...data };
+
+    if (payload.password) {
+      payload.password = await hashPassword(payload.password);
+    }
+
+    return model.create(payload);
+  };
+
+  const findByEmail = (email, includePassword = false) => {
+    const query = model.findOne({ email: email.toLowerCase() });
     if (includePassword) {
       query.select('+password');
     }
     return query;
-  }
+  };
 
-  async findById(id) {
-    return User.findById(id).select('-password');
-  }
+  const findById = (id) => model.findById(id).select('-password');
 
-  async findAll({ skip, limit }) {
-    return User.find()
+  const findAll = ({ skip, limit }) =>
+    model
+      .find()
       .select('-password')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
-  }
 
-  async count() {
-    return User.countDocuments();
-  }
-}
+  const count = () => model.countDocuments();
 
-module.exports = AuthRepository;
+  return {
+    create,
+    findByEmail,
+    findById,
+    findAll,
+    count
+  };
+};
+
+module.exports = createAuthRepository;

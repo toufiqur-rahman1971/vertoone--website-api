@@ -2,10 +2,11 @@ const { connectToDatabase, disconnectDatabase } = require('./connection');
 const config = require('../config');
 const logger = require('../utils/logger');
 const { ROLES } = require('../utils/constants');
-const User = require('../../modules/auths/auth.model');
+const createAuthRepository = require('../../modules/auths/auth.repository');
 
 const seedSuperAdmin = async () => {
   await connectToDatabase();
+  const authRepository = createAuthRepository();
 
   if (!config.admin.password) {
     throw new Error(
@@ -13,14 +14,14 @@ const seedSuperAdmin = async () => {
     );
   }
 
-  const existingAdmin = await User.findOne({ email: config.admin.email });
+  const existingAdmin = await authRepository.findByEmail(config.admin.email);
 
   if (existingAdmin) {
     logger.info('Super admin already exists');
     return;
   }
 
-  await User.create({
+  await authRepository.create({
     email: config.admin.email,
     password: config.admin.password,
     role: ROLES.SUPER_ADMIN

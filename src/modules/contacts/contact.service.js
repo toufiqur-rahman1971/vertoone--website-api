@@ -1,16 +1,11 @@
 const handlebars = require('handlebars');
 const config = require('../../shared/config');
 
-class ContactService {
-  constructor(repository, emailService) {
-    this.repository = repository;
-    this.emailService = emailService;
-  }
+const createContactService = ({ contactRepository, emailService }) => {
+  const createContact = async (payload) => {
+    const contact = await contactRepository.create(payload);
 
-  async createContact(payload) {
-    const contact = await this.repository.create(payload);
-
-    await this.emailService.sendEmail({
+    await emailService.sendEmail({
       to: contact.email,
       subject: 'Thanks for contacting Vertoone',
       template: 'contact-confirmation.html',
@@ -26,7 +21,7 @@ class ContactService {
       const safeSubject = escape(contact.subject);
       const safeMessage = escape(contact.message);
 
-      await this.emailService.sendEmail({
+      await emailService.sendEmail({
         to: config.email.adminNotificationEmail,
         subject: `New contact request: ${contact.subject}`,
         html: `<p>${safeName} sent a message.</p><p><strong>Subject:</strong> ${safeSubject}</p><p>${safeMessage}</p>`
@@ -34,7 +29,11 @@ class ContactService {
     }
 
     return contact;
-  }
-}
+  };
 
-module.exports = ContactService;
+  return {
+    createContact
+  };
+};
+
+module.exports = createContactService;

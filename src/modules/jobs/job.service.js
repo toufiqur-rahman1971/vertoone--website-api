@@ -1,18 +1,12 @@
-const AppError = require('../../shared/utils/app-error');
+const createAppError = require('../../shared/utils/app-error');
 
-class JobService {
-  constructor(repository) {
-    this.repository = repository;
-  }
+const createJobService = ({ jobRepository }) => {
+  const createJob = async (payload) => jobRepository.create(payload);
 
-  async createJob(payload) {
-    return this.repository.create(payload);
-  }
-
-  async listJobs(pagination) {
+  const listJobs = async (pagination) => {
     const [jobs, total] = await Promise.all([
-      this.repository.findAll(pagination),
-      this.repository.count()
+      jobRepository.findAll(pagination),
+      jobRepository.count()
     ]);
 
     return {
@@ -23,37 +17,45 @@ class JobService {
         limit: pagination.limit
       }
     };
-  }
+  };
 
-  async getJob(id) {
-    const job = await this.repository.findById(id);
+  const getJob = async (id) => {
+    const job = await jobRepository.findById(id);
 
     if (!job) {
-      throw new AppError('Job not found', 404);
+      throw createAppError('Job not found', 404);
     }
 
     return job;
-  }
+  };
 
-  async updateJob(id, payload) {
-    const job = await this.repository.update(id, payload);
+  const updateJob = async (id, payload) => {
+    const job = await jobRepository.update(id, payload);
 
     if (!job) {
-      throw new AppError('Job not found', 404);
+      throw createAppError('Job not found', 404);
     }
 
     return job;
-  }
+  };
 
-  async deleteJob(id) {
-    const job = await this.repository.delete(id);
+  const deleteJob = async (id) => {
+    const job = await jobRepository.delete(id);
 
     if (!job) {
-      throw new AppError('Job not found', 404);
+      throw createAppError('Job not found', 404);
     }
 
     return job;
-  }
-}
+  };
 
-module.exports = JobService;
+  return {
+    createJob,
+    listJobs,
+    getJob,
+    updateJob,
+    deleteJob
+  };
+};
+
+module.exports = createJobService;

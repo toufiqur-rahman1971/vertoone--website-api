@@ -1,9 +1,11 @@
 const Contact = require('./contact.model');
 
-class ContactRepository {
-  async create(data) {
-    return Contact.create(data);
-  }
-}
+const createContactRepository = (model = Contact) => {
+  const create = (data) => model.create(data);
 
-module.exports = ContactRepository;
+  return {
+    create
+  };
+};
+
+module.exports = createContactRepository;

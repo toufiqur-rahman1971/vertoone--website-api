@@ -1,10 +1,11 @@
-const ContactRepository = require('./contact.repository');
-const ContactService = require('./contact.service');
+const createContactRepository = require('./contact.repository');
+const createContactService = require('./contact.service');
 const emailService = require('../../shared/services/email.service');
 const asyncHandler = require('../../shared/utils/async-handler');
 const { sendResponse } = require('../../shared/utils/response');
 
-const contactService = new ContactService(new ContactRepository(), emailService);
+const contactRepository = createContactRepository();
+const contactService = createContactService({ contactRepository, emailService });
 
 const createContact = asyncHandler(async (req, res) => {
   const contact = await contactService.createContact(req.body);

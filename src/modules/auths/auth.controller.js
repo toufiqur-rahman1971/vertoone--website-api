@@ -1,10 +1,11 @@
-const AuthRepository = require('./auth.repository');
-const AuthService = require('./auth.service');
+const createAuthRepository = require('./auth.repository');
+const createAuthService = require('./auth.service');
 const asyncHandler = require('../../shared/utils/async-handler');
 const { sendResponse } = require('../../shared/utils/response');
 const { getPagination } = require('../../shared/utils/pagination');
 
-const authService = new AuthService(new AuthRepository());
+const authRepository = createAuthRepository();
+const authService = createAuthService({ authRepository });
 
 const login = asyncHandler(async (req, res) => {
   const data = await authService.login(req.body);

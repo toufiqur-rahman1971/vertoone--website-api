@@ -12,7 +12,7 @@ const mockCreateContact = jest.fn();
 const mockSendEmail = jest.fn().mockResolvedValue({ messageId: 'test-message' });
 
 jest.mock('../src/modules/contacts/contact.repository', () =>
-  jest.fn().mockImplementation(() => ({
+  jest.fn(() => ({
     create: mockCreateContact
   }))
 );
