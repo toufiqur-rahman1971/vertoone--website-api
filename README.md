@@ -78,12 +78,10 @@ npm run dev
    ```
 
 ## 🔐 Default SUPER_ADMIN
-The seed script uses:
-- Email: `admin@vertoone.com`
-- Password: `tamkin@123#1`
+The seed script uses credentials from environment variables. For local defaults, see `.env.example`, and **always** change them before production use.
 
 Update these credentials using environment variables:
 ```
 SUPER_ADMIN_EMAIL=admin@vertoone.com
-SUPER_ADMIN_PASSWORD=tamkin@123#1
+SUPER_ADMIN_PASSWORD=your-secure-password
 ```
