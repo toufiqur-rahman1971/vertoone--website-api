@@ -7,6 +7,10 @@ const User = require('../../modules/auths/auth.model');
 const seedSuperAdmin = async () => {
   await connectToDatabase();
 
+  if (!config.admin.password) {
+    throw new Error('SUPER_ADMIN_PASSWORD is required to seed the super admin');
+  }
+
   const existingAdmin = await User.findOne({ email: config.admin.email });
 
   if (existingAdmin) {
