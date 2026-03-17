@@ -39,7 +39,6 @@ const createTransporter = () => {
   });
 };
 
-let transporter;
 
 const renderTemplate = async (templateName, context = {}) => {
   const templatePath = path.join(templatesDir, templateName);
@@ -48,17 +47,10 @@ const renderTemplate = async (templateName, context = {}) => {
   return template(context);
 };
 
-const getTransporter = () => {
-  if (!transporter) {
-    transporter = createTransporter();
-  }
-
-  return transporter;
-};
-
 const sendEmail = async ({ to, subject, template, context, html, text }) => {
   const renderedHtml = template ? await renderTemplate(template, context) : html;
 
+  const transporter = createTransporter();
   const mailOptions = {
     from: config.email.from,
     to,
@@ -67,7 +59,7 @@ const sendEmail = async ({ to, subject, template, context, html, text }) => {
     text
   };
 
-  const info = await getTransporter().sendMail(mailOptions);
+  const info = await transporter.sendMail(mailOptions);
   logger.info('Email sent: %s', info.messageId);
   return info;
 };

@@ -4,11 +4,7 @@ const logger = require('../utils/logger');
 
 mongoose.set('strictQuery', true);
 
-let cached = global.mongoose;
-
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
-}
+let cached = { conn: null, promise: null };
 
 const connectToDatabase = async () => {
   if (cached.conn) {

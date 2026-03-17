@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const config = require('../config');
 const AppError = require('../utils/app-error');
+const logger = require('../utils/logger');
 
 const authenticate = (req, _res, next) => {
   const authHeader = req.headers.authorization || '';
@@ -15,6 +16,7 @@ const authenticate = (req, _res, next) => {
     req.user = decoded;
     return next();
   } catch (error) {
+    logger.warn('JWT verification failed', error);
     return next(new AppError('Invalid or expired token', 401));
   }
 };
