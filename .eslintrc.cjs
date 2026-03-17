@@ -9,6 +9,7 @@ module.exports = {
     ecmaVersion: 2022
   },
   rules: {
-    'no-console': 'off'
+    'no-console': 'off',
+    'no-unused-vars': ['error', { argsIgnorePattern: '^_' }]
   }
 };
