@@ -12,13 +12,17 @@ const parseBoolean = (value, fallback = false) => {
   return value === 'true' || value === true;
 };
 
+if (!process.env.JWT_SECRET) {
+  throw new Error('JWT_SECRET environment variable is required');
+}
+
 const config = {
   env: process.env.NODE_ENV || 'development',
   port: process.env.PORT || 3000,
   mongodbUri: process.env.MONGODB_URI,
   corsOrigin: process.env.CORS_ORIGIN || '*',
   jwt: {
-    secret: process.env.JWT_SECRET || 'change-this-secret',
+    secret: process.env.JWT_SECRET,
     expiresIn: process.env.JWT_EXPIRES_IN || '1d'
   },
   email: {
