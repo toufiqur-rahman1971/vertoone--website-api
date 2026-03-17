@@ -12,6 +12,7 @@ Production-ready backend API for the Vertoone website built with Node.js, Expres
    ```bash
    cp .env.example .env
    ```
+   Ensure `JWT_SECRET` is set before running the API.
 3. Seed the default SUPER_ADMIN user:
    ```bash
    npm run seed
